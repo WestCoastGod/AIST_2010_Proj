@@ -6,3 +6,6 @@ Important Dates:<br/>
 - Sharing Date: Nov 7
 - Presentation Date: Nov 25
 - Demo video, project code and report submission Deadline: Dec 14
+
+Project Sharing PPT：<br/>
+https://docs.google.com/presentation/d/1jZpx-BIVzBqLPx7YYhFejCKX-UFY6bHy9MKYlhDDMcM/edit?usp=sharing<br/>
