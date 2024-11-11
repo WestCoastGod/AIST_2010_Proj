@@ -7,7 +7,7 @@ def detect_hand_gesture(mode = 0):
     mp_drawing = mp.solutions.drawing_utils
 
     # Start capturing from the webcam
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     # Initialize the hand tracking model
     with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.7, min_tracking_confidence=0.7) as hands:
@@ -62,4 +62,4 @@ def detect_hand_gesture(mode = 0):
     cap.release()
     cv2.destroyAllWindows()
 
-detect_hand_gesture(1)
+detect_hand_gesture(1) #0: Normal Mode, 1: Debug Mode
