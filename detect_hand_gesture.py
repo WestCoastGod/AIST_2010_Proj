@@ -1,6 +1,18 @@
 import cv2
 import mediapipe as mp
+import os
+import joblib
+import numpy as np
+import pandas as pd
+import warnings
 
+
+warnings.filterwarnings('ignore', message="X does not have valid feature names")
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+model_file_path = os.path.join(script_dir, 'gesture_model.pkl')
+model = joblib.load(model_file_path)
+gestures = ["open_hand", "fist"]
 def detect_hand_gesture(mode = 0): 
     # Initialize MediaPipe Hand detector
     mp_hands = mp.solutions.hands
@@ -29,18 +41,22 @@ def detect_hand_gesture(mode = 0):
                     # Draw landmarks on the frame
                     mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
                 
+                    # Extract landmarks
+                    landmarks = []
+                    for lm in hand_landmarks.landmark:
+                        landmarks.append(lm.x)
+                        landmarks.append(lm.y)
+                    
+                    landmarks = np.array(landmarks).reshape(1, -1)
+
+                    # Predict the gesture
+                    gesture_id = model.predict(landmarks)[0]
+                    gesture_text = gestures[int(gesture_id)]
                     # Extract landmark positions for gesture recognition
                     thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
                     index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
                     middle_tip = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
-                
-                    # Example of simple gesture detection logic
-                    # Gesture 1: Open Hand - Distance between thumb and index finger
                     # ***The coordinates are reverse along x-axis(I don't know why...)
-                    if thumb_tip.y > index_tip.y and index_tip.y > middle_tip.y:
-                        gesture_text = "Open Hand"
-                    else:
-                        gesture_text = "Unknown Gesture"
 
                     coordinates_text = f"Thumb Tip Y: {thumb_tip.y:.4f} | Index Tip Y: {index_tip.y:.4f} | Middle Tip Y: {middle_tip.y:.4f}"
                     if mode == 1:
@@ -62,4 +78,4 @@ def detect_hand_gesture(mode = 0):
     cap.release()
     cv2.destroyAllWindows()
 
-detect_hand_gesture(1) #0: Normal Mode, 1: Debug Mode
+detect_hand_gesture(1) #0: Normal Mode 1:Debug Mode
